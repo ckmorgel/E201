@@ -1,74 +1,71 @@
 int get_opcode(int instruction) {
-    instruction &= 0x7F;
-    return instruction >> 2;
+    return (instruction & 0x7F) >> 2;
 }
 
+/*  Returns an integer representing the type of instruction
+ *    0 - Load     (opcode == 0x0)
+ *    1 - Store    (opcode == 0x8)
+ *    2 - Math     (opcode == 0xC)
+ *    3 - Constant (opcode == 0xD)
+ */
 int get_instruction_type(int instruction) {
-    int opcode = get_opcode(instruction);
-
-    switch(opcode) {
-        case 0x0: return 0;
-        case 0x8: return 1;
-        case 0xC: return 2;
-        case 0xD: return 3;
+    switch (get_opcode(instruction)) {
+        case 0x0:
+            return 0;
+        case 0x8:
+            return 1;
+        case 0xC:
+            return 2;
+        case 0xD:
+            return 3;
+        default:
+            return -1;
     }
-
-    return -1;
 }
 
 int get_width(int instruction) {
-    instruction &= 0x00007000;
-    return instruction >> 12;
+    return (instruction >> 12) & 0x7;
 }
 
 int get_destination(int instruction) {
-    instruction &= 0x00000F80;
-    return instruction >> 7;
+    return (instruction >> 7) & 0x1F;
 }
 
 int get_load_address(int instruction) {
-    instruction &= 0x000F8000;
-    return instruction >> 15;
+    return (instruction >> 15) & 0x1F;
 }
 
 int get_load_offset(int instruction) {
-    instruction &= 0xFFF00000;
-    return instruction >> 20;
+    return (instruction >> 20) & 0xFFF;
 }
 
 int get_store_offset(int instruction) {
-    int low = (instruction & 0x00000F80) >> 7;
-    int high = (instruction & 0xFE000000) >> 25;
+    int upper = (instruction >> 25) & 0x7F;
+    int lower = (instruction >> 7) & 0x1F;
 
-    return (high << 5) | low;
+    return (upper << 5) | lower;
 }
 
 int get_store_source(int instruction) {
-    instruction &= 0x01F00000;
-    return instruction >> 20;
+    return (instruction >> 20) & 0x1F;
 }
 
 int get_store_address(int instruction) {
-    instruction &= 0x000F8000;
-    return instruction >> 15;
+    return (instruction >> 15) & 0x1F;
 }
 
 int get_math_function(int instruction) {
-    instruction &= 0x00007000;
-    return instruction >> 12;
+    return (instruction >> 12) & 0x7;
 }
 
 int get_math_operand_a(int instruction) {
-    instruction &= 0x000F8000;
-    return instruction >> 15;
+    return (instruction >> 15) & 0x1F;
 }
 
 int get_math_operand_b(int instruction) {
-    instruction &= 0x01F00000;
-    return instruction >> 20;
+    return (instruction >> 20) & 0x1F;
 }
 
 int get_constant_value(int instruction) {
-    instruction &= 0xFFFFF000;
-    return instruction >> 12;
+    return (instruction >> 12) & 0xFFFFF;
 }
